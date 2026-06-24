@@ -104,6 +104,7 @@ function CodeBlock({ code, filename = 'terminal' }: { code: string; filename?: s
 function AuthModal({ defaultTab = 'login', trigger }: { defaultTab?: 'login' | 'signup', trigger: React.ReactNode }) {
   const [isLoading, setIsLoading] = useState(false)
   const [open, setOpen] = useState(false)
+  const router = useRouter()
 
   async function handleLogin(e: React.FormEvent<HTMLFormElement>) {
     e.preventDefault()
