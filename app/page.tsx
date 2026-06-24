@@ -15,6 +15,7 @@ import {
   Lock,
   User,
   Mail,
+  Menu,
 } from 'lucide-react'
 import { usePrompt } from '@/context/PromptContext'
 import {
@@ -24,6 +25,11 @@ import {
   DialogTitle,
   DialogTrigger,
 } from "@/components/ui/dialog"
+import {
+  Sheet,
+  SheetContent,
+  SheetTrigger,
+} from "@/components/ui/sheet"
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
@@ -227,6 +233,7 @@ function AuthModal({ defaultTab = 'login', trigger }: { defaultTab?: 'login' | '
 /* ─── Header ─── */
 function Header() {
   const [scrolled, setScrolled] = useState(false)
+  const [mobileMenuOpen, setMobileMenuOpen] = useState(false)
   const [user, setUser] = useState<any>(null)
   const router = useRouter()
   const supabase = process.env.NEXT_PUBLIC_SUPABASE_URL && process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY 
@@ -258,6 +265,7 @@ function Header() {
 
   const scrollTo = (id: string) => {
     document.getElementById(id)?.scrollIntoView({ behavior: 'smooth' })
+    setMobileMenuOpen(false)
   }
 
   const handleLogout = async () => {
@@ -318,49 +326,101 @@ function Header() {
         </nav>
       </div>
 
-      <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem' }}>
-        {user ? (
-          <div style={{ display: 'flex', alignItems: 'center', gap: '1rem' }}>
-            <Button 
-              onClick={() => router.push('/chat')}
-              variant="outline" 
-              className="text-xs border-violet-500/30 bg-violet-500/10 text-violet-400 hover:bg-violet-500 hover:text-white rounded-full h-8"
-            >
-              Open Chat <ChevronRight size={14} className="ml-1" />
-            </Button>
-            <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', color: 'white' }}>
-              <div style={{ width: 28, height: 28, borderRadius: '50%', background: 'var(--gradient-violet)', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '0.75rem', fontWeight: 600 }}>
-                {user.user_metadata?.full_name?.[0] || user.email?.[0].toUpperCase()}
-              </div>
-              <button 
-                onClick={handleLogout}
-                style={{ background: 'none', border: 'none', cursor: 'pointer', display: 'flex' }}
-                title="Logout"
+      {/* Desktop Auth Buttons */}
+      <div className="hidden md:flex items-center gap-3">
+          {user ? (
+            <div style={{ display: 'flex', alignItems: 'center', gap: '1rem' }}>
+              <Button 
+                onClick={() => router.push('/chat')}
+                variant="outline" 
+                className="text-xs border-violet-500/30 bg-violet-500/10 text-violet-400 hover:bg-violet-500 hover:text-white rounded-full h-8"
               >
-                <LogOut size={16} className="text-white/40 hover:text-white transition-color" />
-              </button>
+                Open Chat <ChevronRight size={14} className="ml-1" />
+              </Button>
+              <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', color: 'white' }}>
+                <div style={{ width: 28, height: 28, borderRadius: '50%', background: 'var(--gradient-violet)', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '0.75rem', fontWeight: 600 }}>
+                  {user.user_metadata?.full_name?.[0] || user.email?.[0].toUpperCase()}
+                </div>
+                <button 
+                  onClick={handleLogout}
+                  style={{ background: 'none', border: 'none', cursor: 'pointer', display: 'flex' }}
+                  title="Logout"
+                >
+                  <LogOut size={16} className="text-white/40 hover:text-white transition-color" />
+                </button>
+              </div>
             </div>
-          </div>
-        ) : (
-          <>
-            <AuthModal 
-              defaultTab="login"
-              trigger={
-                <Button variant="ghost" className="text-sm font-medium text-white/70 hover:text-white hover:bg-white/5 px-4">
-                  Login
-                </Button>
-              } 
-            />
-            <AuthModal 
-              defaultTab="signup"
-              trigger={
-                <Button className="bg-white text-black hover:bg-white/90 text-sm font-semibold px-5 h-9 rounded-full">
-                  Sign Up
-                </Button>
-              } 
-            />
-          </>
-        )}
+          ) : (
+            <>
+              <AuthModal 
+                defaultTab="login"
+                trigger={
+                  <Button variant="ghost" className="text-sm font-medium text-white/70 hover:text-white hover:bg-white/5 px-4">
+                    Login
+                  </Button>
+                } 
+              />
+              <AuthModal 
+                defaultTab="signup"
+                trigger={
+                  <Button className="bg-white text-black hover:bg-white/90 text-sm font-semibold px-5 h-9 rounded-full">
+                    Sign Up
+                  </Button>
+                } 
+              />
+            </>
+          )}
+      </div>
+
+      {/* Mobile Menu */}
+      <div className="md:hidden">
+        <Sheet open={mobileMenuOpen} onOpenChange={setMobileMenuOpen}>
+          <SheetTrigger asChild>
+            <Button variant="ghost" size="icon">
+              <Menu className="h-6 w-6 text-white/80" />
+              <span className="sr-only">Open menu</span>
+            </Button>
+          </SheetTrigger>
+          <SheetContent side="right" className="bg-[#0a0a0a] border-l-white/10 text-white w-[280px] sm:w-[320px] p-0 pt-10">
+            <nav className="flex flex-col gap-4 px-6 mb-8">
+              {[
+                { label: 'Features', id: 'features' },
+                { label: 'Docs', id: 'docs' },
+                { label: 'Research', id: 'research' },
+              ].map((item) => (
+                <button
+                  key={item.id}
+                  onClick={() => scrollTo(item.id)}
+                  className="text-left text-lg font-medium text-white/80 hover:text-violet-400 transition-colors"
+                >
+                  {item.label}
+                </button>
+              ))}
+            </nav>
+            <div className="border-t border-white/10 px-6 pt-6 flex flex-col gap-4">
+              {user ? (
+                <>
+                  <div className="flex items-center gap-3">
+                    <div className="w-10 h-10 rounded-full bg-gradient-to-br from-violet-500 to-purple-600 flex items-center justify-center text-lg font-bold">
+                      {user.user_metadata?.full_name?.[0] || user.email?.[0].toUpperCase()}
+                    </div>
+                    <div className="flex-1 truncate">
+                      <p className="font-semibold truncate">{user.user_metadata?.full_name}</p>
+                      <p className="text-xs text-white/50 truncate">{user.email}</p>
+                    </div>
+                  </div>
+                  <Button onClick={() => { router.push('/chat'); setMobileMenuOpen(false); }} className="w-full bg-violet-600 hover:bg-violet-700">Open Chat</Button>
+                  <Button onClick={handleLogout} variant="outline" className="w-full border-white/20 bg-transparent hover:bg-white/5">Logout</Button>
+                </>
+              ) : (
+                <>
+                  <AuthModal defaultTab="login" trigger={<Button variant="outline" className="w-full border-white/20 bg-transparent hover:bg-white/5">Login</Button>} />
+                  <AuthModal defaultTab="signup" trigger={<Button className="w-full bg-white text-black hover:bg-white/90">Sign Up</Button>} />
+                </>
+              )}
+            </div>
+          </SheetContent>
+        </Sheet>
       </div>
     </header>
   )
@@ -968,7 +1028,12 @@ function DocumentationSection() {
 /* ─── Page Component ─── */
 export default function LandingPage() {
   return (
-    <main style={{ background: 'var(--obsidian)', minHeight: '100vh' }}>
+    <main style={{ 
+      background: 'var(--obsidian)', 
+      minHeight: '100vh',
+      position: 'relative', // Ensure stacking context
+      zIndex: 10           // Render above the background canvas
+    }}>
       <Header />
       <HeroSection />
       <FeaturesSection />
@@ -980,6 +1045,8 @@ export default function LandingPage() {
           borderTop: '1px solid var(--border-subtle)',
           padding: '4rem var(--content-padding)',
           textAlign: 'center',
+          zIndex: '10000',
+          width: '100%'
         }}
       >
         <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '0.5rem', marginBottom: '1.5rem' }}>
