@@ -524,10 +524,13 @@ export default function ChatPage() {
   const messagesEndRef = useRef<HTMLDivElement>(null)
   const textareaRef = useRef<HTMLTextAreaElement>(null)
   const router = useRouter()
-  const supabase = createClient()
+  const supabase = process.env.NEXT_PUBLIC_SUPABASE_URL && process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY 
+    ? createClient() 
+    : (null as any)
 
   // Initial Load: User & Conversations
   useEffect(() => {
+    if (!supabase) return
     const init = async () => {
       const { data: { session } } = await supabase.auth.getSession()
       if (!session) {

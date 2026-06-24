@@ -229,9 +229,12 @@ function Header() {
   const [scrolled, setScrolled] = useState(false)
   const [user, setUser] = useState<any>(null)
   const router = useRouter()
-  const supabase = createClient()
+  const supabase = process.env.NEXT_PUBLIC_SUPABASE_URL && process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY 
+    ? createClient() 
+    : (null as any)
 
   useEffect(() => {
+    if (!supabase) return
     const checkUser = async () => {
       const { data: { user } } = await supabase.auth.getUser()
       setUser(user)
