@@ -245,8 +245,10 @@ function Header() {
       setUser(session?.user ?? null)
     })
 
-    return () => subscription.unsubscribe()
-  }, [])
+    return () => {
+      if (subscription) subscription.unsubscribe()
+    }
+  }, [supabase])
 
   useEffect(() => {
     const onScroll = () => setScrolled(window.scrollY > 100)

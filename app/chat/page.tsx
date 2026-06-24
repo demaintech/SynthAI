@@ -550,8 +550,10 @@ export default function ChatPage() {
       setUser(session?.user ?? null)
     })
 
-    return () => subscription.unsubscribe()
-  }, [])
+    return () => {
+      if (subscription) subscription.unsubscribe()
+    }
+  }, [supabase])
 
   // Switch Conversation: Load Messages
   useEffect(() => {
