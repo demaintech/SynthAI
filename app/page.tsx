@@ -119,7 +119,7 @@ function AuthModal({ defaultTab = 'login', trigger }: { defaultTab?: 'login' | '
     } else {
       toast.success('Successfully logged in!')
       setOpen(false)
-      router.refresh()
+      router.push('/chat')
     }
     setIsLoading(false)
   }
@@ -135,7 +135,7 @@ function AuthModal({ defaultTab = 'login', trigger }: { defaultTab?: 'login' | '
     } else {
       toast.info(result.message || 'Signup successful! Check your email.')
       setOpen(false)
-      router.refresh()
+      router.push('/chat')
     }
     setIsLoading(false)
   }
