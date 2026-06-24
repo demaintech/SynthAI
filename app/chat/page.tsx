@@ -638,7 +638,7 @@ export default function ChatPage() {
     setIsTyping(true)
 
     // 2. Save user message to Supabase
-    await saveMessage(currentConvId, 'user', trimmed)
+    await saveMessage(currentConvId!, 'user', trimmed)
 
     // 3. Prepare items for AI history
     const historyItems = [...messages, userMsg].map(msg => ({
