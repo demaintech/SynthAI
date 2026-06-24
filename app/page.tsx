@@ -299,7 +299,7 @@ function Header() {
           </span>
         </div>
         
-        <nav style={{ display: 'flex', gap: '1.5rem' }} className="hidden md:flex">
+        <nav style={{ display: 'flex', gap: '1rem' }} className="hidden md:flex">
           {[
             { label: 'Features', id: 'features' },
             { label: 'Docs', id: 'docs' },
