@@ -661,7 +661,7 @@ export default function ChatPage() {
       setMessages((prev) => [...prev, assistantMsg])
       
       // 5. Save AI message to Supabase
-      await saveMessage(currentConvId, 'assistant', result.text)
+      await saveMessage(currentConvId!, 'assistant', result.text)
       
       // Update the local messages to have the real database format (optional but cleaner)
       // This is safe because we already showed the UI update above
